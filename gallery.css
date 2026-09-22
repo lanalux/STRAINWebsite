@@ -16,17 +16,19 @@
 
 /* FULLSCREEN GALLERY */
 
+
 .lightbox {
     position: fixed;
     inset: 0;
 
-    background: rgba(0, 0, 0, 0.9);
-
     display: none;
+
     align-items: center;
     justify-content: center;
 
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.9);
+
+    z-index: 9999;
 }
 
 .lightbox.open {
@@ -38,6 +40,8 @@
     max-height: 90vh;
     object-fit: contain;
 }
+
+
 
 
 /* BUTTONS */

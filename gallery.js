@@ -1,86 +1,97 @@
-const images = document.querySelectorAll(.gallery img);
+document.addEventListener("DOMContentLoaded", () => {
 
-const lightbox = document.getElementById(lightbox);
-const lightboxImage = document.querySelector(.lightbox-image);
+    const images = document.querySelectorAll(".gallery img");
 
-const closeButton = document.querySelector(.lightbox-close);
-const prevButton = document.querySelector(.lightbox-prev);
-const nextButton = document.querySelector(.lightbox-next);
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImage = document.querySelector(".lightbox-image");
 
-let currentImage = 0;
+    const closeButton = document.querySelector(".lightbox-close");
+    const nextButton = document.querySelector(".lightbox-next");
+    const prevButton = document.querySelector(".lightbox-prev");
+
+    let currentImage = 0;
 
 
-function showImage(index) {
+    // SHOW IMAGE
+    function showImage(index) {
 
-    if (index  0) {
-        index = images.length - 1;
+        // Loop from last image back to first
+        if (index >= images.length) {
+            index = 0;
+        }
+
+        // Loop from first image back to last
+        if (index < 0) {
+            index = images.length - 1;
+        }
+
+        currentImage = index;
+
+        lightboxImage.src = images[currentImage].src;
+        lightboxImage.alt = images[currentImage].alt;
     }
 
-    if (index = images.length) {
-        index = 0;
-    }
 
-    currentImage = index;
+    // OPEN THUMBNAIL
+    images.forEach((image, index) => {
 
-    lightboxImage.src = images[currentImage].src;
-    lightboxImage.alt = images[currentImage].alt;
-}
+        image.addEventListener("click", () => {
 
+            showImage(index);
+            lightbox.classList.add("open");
 
-function openLightbox(index) {
-    showImage(index);
-    lightbox.classList.add(open);
-}
+        });
 
-
-function closeLightbox() {
-    lightbox.classList.remove(open);
-}
-
-
-images.forEach((image, index) = {
-    image.addEventListener(click, () = {
-        openLightbox(index);
     });
-});
 
 
-prevButton.addEventListener(click, () = {
-    showImage(currentImage - 1);
-});
+    // CLOSE
+    closeButton.addEventListener("click", () => {
+        lightbox.classList.remove("open");
+    });
 
 
-nextButton.addEventListener(click, () = {
-    showImage(currentImage + 1);
-});
-
-
-closeButton.addEventListener(click, closeLightbox);
-
-
-lightbox.addEventListener(click, (event) = {
-    if (event.target === lightbox) {
-        closeLightbox();
-    }
-});
-
-
-document.addEventListener(keydown, (event) = {
-
-
-    if (!lightbox.classList.contains(open)) {
-        return;
-    }
-
-    if (event.key === ArrowLeft) {
-        showImage(currentImage - 1);
-    }
-
-    if (event.key === ArrowRight) {
+    // NEXT
+    nextButton.addEventListener("click", () => {
         showImage(currentImage + 1);
-    }
+    });
 
-    if (event.key === Escape) {
-        closeLightbox();
-    }
+
+    // PREVIOUS
+    prevButton.addEventListener("click", () => {
+        showImage(currentImage - 1);
+    });
+
+
+    // CLICK BACKGROUND TO CLOSE
+    lightbox.addEventListener("click", (event) => {
+
+        if (event.target === lightbox) {
+            lightbox.classList.remove("open");
+        }
+
+    });
+
+
+    // KEYBOARD CONTROLS
+    document.addEventListener("keydown", (event) => {
+
+        if (!lightbox.classList.contains("open")) {
+            return;
+        }
+
+        if (event.key === "ArrowRight") {
+            showImage(currentImage + 1);
+        }
+
+        if (event.key === "ArrowLeft") {
+            showImage(currentImage - 1);
+        }
+
+        if (event.key === "Escape") {
+            lightbox.classList.remove("open");
+        }
+
+    });
+
 });
