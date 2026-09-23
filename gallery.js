@@ -12,15 +12,17 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImage = 0;
 
 
+    // -------------------------
     // SHOW IMAGE
+    // -------------------------
+
     function showImage(index) {
 
-        // Loop from last image back to first
+        // Loop around
         if (index >= images.length) {
             index = 0;
         }
 
-        // Loop from first image back to last
         if (index < 0) {
             index = images.length - 1;
         }
@@ -32,12 +34,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // OPEN THUMBNAIL
+    // -------------------------
+    // OPEN IMAGE
+    // -------------------------
+
     images.forEach((image, index) => {
 
         image.addEventListener("click", () => {
 
             showImage(index);
+
             lightbox.classList.add("open");
 
         });
@@ -45,35 +51,57 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    // -------------------------
     // CLOSE
-    closeButton.addEventListener("click", () => {
+    // -------------------------
+
+    function closeLightbox() {
         lightbox.classList.remove("open");
-    });
+    }
 
 
-    // NEXT
-    nextButton.addEventListener("click", () => {
+    closeButton.addEventListener("click", closeLightbox);
+
+
+    // -------------------------
+    // NEXT / PREVIOUS
+    // -------------------------
+
+    nextButton.addEventListener("click", (event) => {
+
+        event.stopPropagation();
+
         showImage(currentImage + 1);
+
     });
 
 
-    // PREVIOUS
-    prevButton.addEventListener("click", () => {
+    prevButton.addEventListener("click", (event) => {
+
+        event.stopPropagation();
+
         showImage(currentImage - 1);
+
     });
 
 
+    // -------------------------
     // CLICK BACKGROUND TO CLOSE
+    // -------------------------
+
     lightbox.addEventListener("click", (event) => {
 
         if (event.target === lightbox) {
-            lightbox.classList.remove("open");
+            closeLightbox();
         }
 
     });
 
 
-    // KEYBOARD CONTROLS
+    // -------------------------
+    // KEYBOARD
+    // -------------------------
+
     document.addEventListener("keydown", (event) => {
 
         if (!lightbox.classList.contains("open")) {
@@ -89,9 +117,59 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (event.key === "Escape") {
-            lightbox.classList.remove("open");
+            closeLightbox();
         }
 
     });
+
+
+    // -------------------------
+    // MOBILE SWIPE
+    // -------------------------
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    lightbox.addEventListener("touchstart", (event) => {
+
+        touchStartX = event.changedTouches[0].clientX;
+        touchStartY = event.changedTouches[0].clientY;
+
+    }, { passive: true });
+
+
+    lightbox.addEventListener("touchend", (event) => {
+
+        const touchEndX = event.changedTouches[0].clientX;
+        const touchEndY = event.changedTouches[0].clientY;
+
+        const differenceX = touchEndX - touchStartX;
+        const differenceY = touchEndY - touchStartY;
+
+
+        // Ignore mostly vertical swipes
+        if (Math.abs(differenceX) < Math.abs(differenceY)) {
+            return;
+        }
+
+
+        // Swipe must be at least 50px
+        if (Math.abs(differenceX) < 50) {
+            return;
+        }
+
+
+        // Swipe left
+        if (differenceX < 0) {
+            showImage(currentImage + 1);
+        }
+
+
+        // Swipe right
+        if (differenceX > 0) {
+            showImage(currentImage - 1);
+        }
+
+    }, { passive: true });
 
 });
